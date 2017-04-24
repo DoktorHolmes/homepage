@@ -1,0 +1,171 @@
+<html>
+	<head> 
+		<meta name="viewport" content="width=device-width, initial-scale=1" /> 
+		<title>ZINCNET</title>
+		<link rel="stylesheet" type="text/css" href="styles.css"/>
+		<script type="text/javascript" src="scripts/jquery.js"></script>
+		<script src=http://cdn.pubnub.com/pubnub.min.js></script>
+		</head>
+	<body background="images/base/grid3.png">
+<img id=overlay src="images/base/Overlay02.png">
+		<audio autoplay>
+			<source src="sound/theme1.mp3" type="audio/mpeg">
+		</audio>
+			<font color="Lime">
+			<div id=znet> ZINCNET </div>
+			<div id=znet2> Communication Network </div>
+			</font>
+			<div id=motd align=center style="overflow:auto;">
+			<p>
+				Messages of the Day (Updated on 4-14-16)
+				<br>
+				Please be sure to announce that you are leaving a channel as notifications for leaving a channel are currently nonfunctional. <br> -Admin
+				<br>
+				<br>
+				If you are going to use the chatroom for chatting, please either use your real name or a consistent username. <br> And PLEASE do not give out the main channels to your friends.  I mean it, this is a private chatroom! <br> Thanks very much! <br> -Vic
+				</p>
+				</div>
+				<div id=logo><img src="images/base/zinclogosmall.png"></div>
+				<div id=history style="overflow:auto;"><font size="4"> <strong> Chat history will appear here!  Join a channel to begin! </strong> </font></div>
+				<input id=input style="overflow:auto;" placeholder="Message"></div>
+				<div id=users></div>
+				<div id=box style="overflow:auto;"><font size="4"><strong>Chat will appear here!</strong></font></div>
+				<input id=channelbox style="overflow:auto;" placeholder="Channel"></div>
+				<input id=usernamebox style="overflow:auto;" placeholder="Username"></div>
+				<div> <button id=channelboxbutton> JOIN </div>
+				<button id=sendbutton>SEND MESSAGE
+
+
+</div>
+<p id=SDSCounter>
+<font color="Red" size=16">
+10:00:00
+</font>
+</p>
+ <!-- <div id=SDS style="display:none;"> 
+<input id=SDSInput style="overflow:auto;" placeholder="SDS Activation Code"></input>
+<button id=SDSButton placeholder="Activate">
+</button>
+<video width="100%"height="100%" id=SDSVideo style="width: 100%;
+	height: 100%;"src="misc/SDS.mp4"type="video/mp4">
+  <source src="misc/SDS.mp4"type="video/mp4">
+
+Your browser does not support the video tag.
+</video> -->
+</div>
+<script>(function(){
+
+var pubnub = PUBNUB.init({
+        publish_key: 'pub-c-78570809-f17e-43ea-862b-14d3d738ae38',
+        subscribe_key: 'sub-c-4957a908-027d-11e6-8916-0619f8945a4f',
+        error: function (error) {
+            console.log('Error:', error);
+        }
+    });
+var usernamebox = document.getElementById('usernamebox');
+var channelbox = document.getElementById('channelbox');
+var hist = document.getElementById('history');
+var users = document.getElementById('users');
+var d = new Date();
+var box = pubnub.$('box'), input = pubnub.$('input'), channel = "zincnet";
+var audio = new Audio('sound/newmessage.mp3');
+var channelboxbutton = document.getElementById('channelboxbutton');
+document.getElementById ("channelboxbutton").addEventListener ("click", joinChannel, false);
+document.getElementById ("channelboxbutton").addEventListener ("click", playPageSound, false);
+document.getElementById ("sendbutton").addEventListener ("click", sendMessage, false);
+function fadeInPage(){
+	$("#logo").fadeIn(3000);
+	$("#znet").fadeIn(3000);
+	$("#znet2").fadeIn(3000);
+	$("#history").fadeIn(5000);
+	$("#box").fadeIn(5000);
+	$("#input").fadeIn(5000);
+	$("#channelbox").fadeIn(5000);
+	$("#channelboxbutton").fadeIn(5000);
+	$("#usernamebox").fadeIn(5000);
+	$("#sendbutton").fadeIn(5000);
+	$("#motd").fadeIn(5000);
+	
+};
+function joinChannel(){
+	changeUName();
+    var pubnub = PUBNUB.init({
+        publish_key: 'pub-c-78570809-f17e-43ea-862b-14d3d738ae38',
+        subscribe_key: 'sub-c-4957a908-027d-11e6-8916-0619f8945a4f',
+        uuid: usernamebox.value,
+        error: function (error) {
+            console.log('Error:', error);
+        }
+    });
+		channelName = document.getElementById("channelbox").value;
+		pubnub.subscribe({
+			channel  : channelName,
+			presence : function(m){console.log(m)},
+			callback : function(text) { box.innerHTML = (''+text).replace( /[<>]/g, '' ) + '<br>' + box.innerHTML, audio.play();},
+		});
+		pubnub.bind( 'keyup', input, function(e) {
+			if(usernamebox.value != ""){
+				$("#usernamediv").fadeOut(1000);
+			};
+			(e.keyCode || e.charCode) === 13 && pubnub.publish({
+					channel : channelName, message : usernamebox.value + ": " + input.value + "    [Time: " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + "    Date: "+ d.getDay() + "/" + d.getMonth() + "/" + d.getDate() + "]", x : (input.value='')
+		}
+		)
+		});
+		pubnub.history({
+			channel: channelName,
+			callback : function(text) { hist.innerHTML = (''+text).replace( /[<>]/g, '' ).replace(/,/g, "<br>").replace("[object Object]", "") +  '<br>' + box.innerHTML },
+			count: 40,
+			reverse: false
+		});
+    pubnub.state({
+          channel: channelName,
+           uuid: usernamebox.value,
+           state: {isTyping: true}, 
+           callback: function(m){console.log(m)}
+         });
+		pubnub.here_now({
+   			channel : channelName,
+    		//callback : function(messages){users.innerHTML = JSON.stringify(messages);},
+			state : true
+		});
+		console.log("Joined channel!");
+		$("#channelboxdiv").fadeOut(1000);
+		pubnub.publish({
+			channel : channelName, 
+			message : usernamebox.value + " connected to " + channelName + "!" + "    [Time: " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + "    Date: "+ d.getDay() + "/" + d.getMonth() + "/" + d.getDate() + "]",
+			x : (input.value='')
+		});
+};
+function playPageSound(){
+		channelName = document.getElementById("channelbox").value;
+		var pagesound = new Audio('sound/pagesound/' + channelName + '.mp3');
+		var pagesoundwav = new Audio('sound/pagesound/' + channelName + '.wav');
+		var pagemusic = new Audio('sound/pagemusic/' + channelName + '.mp3');
+		var pagemusicwav = new Audio('sound/pagemusic/' + channelName + '.wav');
+		pagesound.play();
+		pagesoundwav.play();
+		pagemusic.addEventListener('ended', function() {
+			this.currentTime = 0;
+			this.play();
+		}, false);
+		pagemusicwav.addEventListener('ended', function() {
+			this.currentTime = 0;
+			this.play();
+		}, false);
+		pagemusic.play();
+		pagemusicwav.play();
+		}
+function sendMessage(){
+pubnub.publish({
+	channel : channelName, message : uname + ": " + input.value + "    [Time: " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + "    Date: "+ d.getDay() + "/" + d.getMonth() + "/" + d.getDate() + "]", x : (input.value='')
+});
+};
+function changeUName(){
+	uname = usernamebox.value;
+}
+fadeInPage();
+})()</script>
+<script type="text/javascript" src="scripts/sds.js"></script>
+</body>
+</html>

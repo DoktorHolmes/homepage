@@ -1,0 +1,29 @@
+Welcome to the BaxtonOS Alpha, brought to you by the Zinc Innovators Corporation!
+
+This system is designed for sharing documents (including text documents and HTML) with other users on the system. 
+
+The database operates in a tier-based system. Level 1 files are accessible to everyone. Level 2 files are accessible to all users with personal accounts. Level 3 files are the top tier and are accessible to authorized users only. Each user also has their own personal files, which are accessible only to them.
+
+If you are using the guest account, you have access to Level 1 files only. Please contact Mr. Zinc if you wish to set up a personal account. 
+
+Currently, files must be approved by Mr. Zinc before being uploaded to the system. 
+
+You may contact Mr. Zinc by emailing him at 'zincinnovators@gmail.com'. 
+
+GETTING STARTED
+---------------
+When you first load the database, you will be presented with a console. Type "login" to begin, and enter either your username and password or "guest" and "zincnet", respectively. 
+Now you will see the home screen.
+
+You may type "HELP" at any time on the main screen to review a list of currently accessible commands. 
+
+Type "LS1" to see a list of all Level 1 files, "LS2" for Level 2 files, and so on.
+
+Once you find a file, you may type "LoadL1 <file name>" to load that Level 1 file into the display below! As you may have guessed, you may type "LoadL2 <file name>" to load a Level 2 file instead. 
+"LoadL3 <file name>" is for Level 3 files, by the way. 
+
+"LoadPrivate <file name>" will load a file that only your account can read. 
+
+All uploads go through Mr. Zinc; remember, you can contact him at "zincinnovators@gmail.com".
+
+Thank you for choosing ZincNet! 
